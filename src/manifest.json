@@ -1,0 +1,12 @@
+{
+    "name": "QuickMark Extension",
+    "description": "QuickMark is an AI enabled chrome extension for bookmarking.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "./assets/bookmark.png"
+    },
+    "permissions": [],
+    "host_permissions": []  
+}
