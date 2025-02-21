@@ -12,7 +12,10 @@
   "license": "ISC",
   "description": "quickmark is an AI enabled chrome extension for bookmarking",
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "css-loader": "^7.1.2",
+    "gapi-script": "^1.2.0",
+    "google-auth-library": "^9.15.1",
     "postcss-loader": "^8.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

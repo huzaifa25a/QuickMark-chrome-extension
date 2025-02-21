@@ -1,7 +1,10 @@
 import React from 'react';
 import google from '../assets/google.svg';
+import {useState} from 'react';
 
 const Popup = () => {
+  const [opensignup, setopensignup] = useState(false);
+  
   return (
     <div className='flex flex-col items-center p-8 gap-4 w-[396px] h-auto rounded-[15px] bg-[linear-gradient(0deg,rgba(136,92,92,0.2),rgba(136,92,92,0.2)),linear-gradient(180deg,rgba(56,179,255,0.7)_0%,rgba(206,152,152,0.238)_100%)] border-white shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
         <div className='flex flex-col items-center gap-2 w-full'>

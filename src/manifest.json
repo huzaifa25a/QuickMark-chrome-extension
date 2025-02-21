@@ -7,6 +7,13 @@
         "default_popup": "popup.html",
         "default_icon": "./assets/bookmark.png"
     },
-    "permissions": [],
-    "host_permissions": []  
+    "permissions": [
+        "identity"
+    ],
+    "host_permissions": [],
+    
+    "oauth2": {
+        "client_id": "189203013528-gdcl0osud1987fipj4hr5aduhcrek1j6.apps.googleusercontent.com",
+        "scopes":["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
+    }
 }

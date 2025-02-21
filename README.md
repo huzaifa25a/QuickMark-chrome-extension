@@ -12,6 +12,8 @@ QuickMark
 │  ├─ popup.html
 │  ├─ popup.js
 │  └─ popup.js.LICENSE.txt
+├─ New folder
+│  └─ client_secret_189203013528-gdcl0osud1987fipj4hr5aduhcrek1j6.apps.googleusercontent.com.json
 ├─ package-lock.json
 ├─ package.json
 ├─ postcss.config.js
@@ -20,7 +22,12 @@ QuickMark
 │  │  ├─ bookmark.png
 │  │  ├─ bookmarks.svg
 │  │  └─ google.svg
+│  ├─ background
+│  │  ├─ login.js
+│  │  └─ logout.js
 │  ├─ manifest.json
+│  ├─ pages
+│  │  └─ signup.jsx
 │  └─ popup
 │     ├─ index.css
 │     ├─ index.jsx
