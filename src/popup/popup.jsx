@@ -28,6 +28,13 @@ const Popup = () => {
                     Sign Up
                 </button>
             </div>
+            <div>
+                <input 
+                    type='text'
+                    placeholder='Type location'
+                    // onChange={suggestions}
+                />
+            </div>
         </div>
     </div>
   )
