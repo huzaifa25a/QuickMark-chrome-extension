@@ -1,10 +1,40 @@
 import React from 'react';
 import google from '../assets/google.svg';
 import {useState} from 'react';
+import {auth, provider, signInWithPopup, signOut, placesApiKey} from './config';
 
 const Popup = () => {
-  const [opensignup, setopensignup] = useState(false);
-  
+    const [user, setUser] = useState(null);
+    const [suggestions, setSuggestions] = useState([]);
+
+    async function getLocation(query){
+        const endpoint = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&key=${placesApiKey}`;
+        try{
+            const respone = await fetch(endpoint);
+            if(!respone.ok){
+                throw new Error(`API error: ${respone.status}`);
+            }
+            const data = await respone.json();
+            console.log(`The fetched suggested location data is:`, data);
+            setSuggestions(data.predictions);
+        }
+        catch{
+            console.log("Error fetching autocomplete location: ", error);
+            return [];
+        }
+    }
+    
+    const googleSignIn = async () => {
+        try{
+            const result =  await signInWithPopup(auth, provider);
+            setUser(result.user);
+            console.log("User has been found: ", result.user);
+        }
+        catch(error){
+            console.log("Error finding user: ",error);
+        }
+    }
+
   return (
     <div className='flex flex-col items-center p-8 gap-4 w-[396px] h-auto rounded-[15px] bg-[linear-gradient(0deg,rgba(136,92,92,0.2),rgba(136,92,92,0.2)),linear-gradient(180deg,rgba(56,179,255,0.7)_0%,rgba(206,152,152,0.238)_100%)] border-white shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
         <div className='flex flex-col items-center gap-2 w-full'>
@@ -15,7 +45,7 @@ const Popup = () => {
                 Fast and efficient bookmark management
             </p>
             <div className='flex flex-row items-center justify-center gap-3 mt-4 w-full'>
-                    <button className='flex flex-row py-[4px] px-4 rounded-full border-[1px] border-white text-white font-kufam font-normal text-[14px] leading-[25px] hover:bg-white/20 transition-colors'>
+                    <button onClick={googleSignIn} className='flex flex-row py-[4px] px-4 rounded-full border-[1px] border-white text-white font-kufam font-normal text-[14px] leading-[25px] hover:bg-white/20 transition-colors'>
                         Continue with Google 
                         <img src={google} alt='Google-Icon' style={{height:'25px', marginLeft:'8px'}}/>
                     </button>
@@ -28,13 +58,25 @@ const Popup = () => {
                     Sign Up
                 </button>
             </div>
-            <div>
+            {/* <div>
                 <input 
                     type='text'
                     placeholder='Type location'
-                    // onChange={suggestions}
+                    onChange={(e) => getLocation(e.target.value)}
+                    className='p-2 rounded mt-2 w-full'
                 />
-            </div>
+                <div className="suggestions-list bg-white rounded mt-2 w-full max-h-40 overflow-y-auto shadow">
+                    {suggestions.map((suggestion, index) => (
+                        <div 
+                            key={index}
+                            className="p-2 cursor-pointer hover:bg-gray-200"
+                            onClick={() => console.log(`Selected: ${suggestion.description}`)}
+                        >
+                            {suggestion.description}
+                        </div>
+                    ))}
+                </div>
+            </div> */}
         </div>
     </div>
   )

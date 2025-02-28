@@ -9,9 +9,12 @@
     },
     "permissions": [
         "identity",
-        "storage"
+        "storage",
+        "offscreen"
     ],
-    "host_permissions": [],
+    "host_permissions": [
+        "https://maps.googleapis.com/*"
+    ],
     
     "oauth2": {
         "client_id": "189203013528-gdcl0osud1987fipj4hr5aduhcrek1j6.apps.googleusercontent.com",
