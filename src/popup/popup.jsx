@@ -1,45 +1,31 @@
 import React from 'react';
-import {useState} from 'react';
-import {auth, provider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut,  placesApiKey} from '../config';
+import {useState, useEffect} from 'react';
+import {auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from '../config';
 import Bookmark from './bookmark';
 import bookmarkIcon from '../assets/bookmark.svg'
 
 const Popup = () => {
     const [user, setUser] = useState(null);
-    const [suggestions, setSuggestions] = useState([]);
     const [showBookmark, setShowBookmark] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [showSignup, setShowSignup] = useState(true);
-    const [showLogin, setShowLogin] = useState(false);
+    const [showSignup, setShowSignup] = useState(false);
+    const [showLogin, setShowLogin] = useState(true);
 
-    async function getLocation(query){
-        const endpoint = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&key=${placesApiKey}`;
-        try{
-            const respone = await fetch(endpoint);
-            if(!respone.ok){
-                throw new Error(`API error: ${respone.status}`);
+    useEffect(() => {
+        const checkUser = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user);
+                setShowBookmark(true);
+                setShowSignup(false);
+                setShowLogin(false);
+            } else {
+                setUser(null);
+                setShowBookmark(false);
             }
-            const data = await respone.json();
-            console.log(`The fetched suggested location data is:`, data);
-            setSuggestions(data.predictions);
-        }
-        catch{
-            console.log("Error fetching autocomplete location: ", error);
-            return [];
-        }
-    }
-    
-    const googleSignIn = async () => {
-        try{
-            const result =  await signInWithPopup(auth, provider);
-            setUser(result.user);
-            console.log("User has been found: ", result.user);
-        }
-        catch(error){
-            console.log("Error finding user: ",error);
-        }
-    }
+        });
+        return () => checkUser();
+    }, []);
 
     const login = async () => {
         if (!email || !password) {
@@ -48,7 +34,10 @@ const Popup = () => {
         }
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            setUser(result.user);
+            chrome.storage.local.set({user: result.user.email});
+            console.log("Email is: ", result.user.email);
+            console.log("User Id is: ", result.user.uid);
+            chrome.storage.local.set({userId: result.user.uid});
             if(result){
                 setShowLogin(false);
                 setShowSignup(false);
@@ -61,9 +50,12 @@ const Popup = () => {
     };
 
     const signin = async () => {
+        if (!email || !password) {
+            console.log("Both email and password are required!");
+            return;
+        }
         try{
             const result = await createUserWithEmailAndPassword(auth, email, password);
-            setUser(result.user);
             if(result){
                 setShowLogin(false);
                 setShowSignup(false);
@@ -186,7 +178,7 @@ const Popup = () => {
         }    
     {
         showBookmark && 
-        <Bookmark/>
+        <Bookmark user={setUser} bookmark={setShowBookmark} login={setShowLogin}/>
     }
     </>
   )

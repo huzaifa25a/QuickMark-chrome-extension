@@ -10,7 +10,10 @@
     "permissions": [
         "identity",
         "storage",
-        "offscreen"
+        "offscreen",
+        "tabs",
+        "currentTab",
+        "activeTab"
     ],
     "host_permissions": [
         "https://maps.googleapis.com/*"
