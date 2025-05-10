@@ -10,6 +10,7 @@ import savedIcon from '../assets/savedIcon.svg'
 import deleteIcon from '../assets/delete.svg'
 import settingsIcon from '../assets/settingsIcon.svg'
 import logoutIcon from '../assets/logout-icon.svg'
+import gotoIcon from '../assets/external-link.png'
 
 const Bookmark = (props) => {
     const [userId, setUserId] = useState(null);
@@ -178,11 +179,16 @@ const Bookmark = (props) => {
                     {bookmarks.map((bookmark) => (
                         <div className='bg-white w-[290px] py-2 px-1.5 border-[rgba(0,0,0,0.14)] border-[1px] rounded-[10px] flex flex-row items-center justify-between shadow-md'>
                             <div className='flex flex-col gap-1'>
-                                <span key={bookmark.id} className='text-[14px] max-w-[230px] truncate tracking-[4%] font-semibold'><a href={bookmark.url} target='_blank'>{bookmark.title}</a></span>
+                                <a href={bookmark.url} target='_blank' className='flex gap-1.5 items-center'>
+                                    <span key={bookmark.id} className='text-[14px] w-auto max-w-[215px] truncate tracking-[4%] font-semibold'>
+                                        {bookmark.title}    
+                                    </span>
+                                    <img src={gotoIcon} alt='external link' className='h-[12px] transition-all hover:scale-110 duration-200'/>
+                                </a>    
                                 <span key={bookmark.id} className='flex gap-1 text-[12px] tracking-[4%]'><span className='font-semibold'>Tags: </span>{bookmark.tags ? bookmark.tags.join(", ") : ""}</span>  
                             </div>
                             <button onClick={() => removeBookmark(bookmark.id)} className='cursor-pointer'>
-                                <img src={deleteIcon} alt='bookmark Icon' className='h-[16px]'/>
+                                <img src={deleteIcon} alt='bookmark Icon' className='h-[16px] transition-transform duration-200 hover:scale-125'/>
                             </button>
                         </div>
                         ))}
@@ -190,17 +196,17 @@ const Bookmark = (props) => {
                 </div>
             </div>    
         <div id='footer' className='flex flex-row p-4 justify-between items-center bg-[#5591D7] w-[347px] h-[41px]'>
-            <div className='flex gap-2'>
+            <div className='flex gap-1'>
                 <button className='cursor-pointer'>
-                    <img src={settingsIcon} alt='bookmark-icon' className='h-[20px] mt-[3px] mr-[2px]'/>
+                    <img src={settingsIcon} alt='bookmark-icon' className='h-[20px] mt-[3px] mr-[2px] transition-tranform hover:scale-110 duration-200'/>
                 </button>
                 <span className='text-[16px] font-normal tracking-[1px] text-white'>Settings</span>
             </div>
-            <div className='flex gap-2 cursor-pointer' onClick={handleLogout}>
+            <div className='flex gap-1 cursor-pointer' onClick={handleLogout}>
                 <button>
-                    <img src={logoutIcon} alt='bookmark-icon' className='h-[20px] mt-[3px] mr-[2px]'/>
+                    <img src={logoutIcon} alt='bookmark-icon' className='h-[20px] mt-[3px] mr-[2px] transition-all hover:scale-110 duration-200'/>
                 </button>
-                <span className='text-[16px] font-normal tracking-[1px] text-white'>Logout</span>
+                <span className='pb-[1px] text-[16px] font-normal tracking-[1px] text-white border-b-2 border-transparent hover:border-white'>Logout</span>
             </div>
         </div>    
     </div>

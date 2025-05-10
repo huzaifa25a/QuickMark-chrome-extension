@@ -3,24 +3,29 @@ import {useState, useEffect} from 'react';
 import {auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from '../config';
 import Bookmark from './bookmark';
 import bookmarkIcon from '../assets/bookmark.svg'
+import loader from '../assets/bouncing-circles.svg'
 
 const Popup = () => {
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [showBookmark, setShowBookmark] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showSignup, setShowSignup] = useState(false);
-    const [showLogin, setShowLogin] = useState(true);
+    const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
         const checkUser = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUser(user);
                 setShowBookmark(true);
+                setLoading(false);
                 setShowSignup(false);
                 setShowLogin(false);
             } else {
                 setUser(null);
+                setLoading(false);
+                setShowLogin(true);
                 setShowBookmark(false);
             }
         });
@@ -41,6 +46,7 @@ const Popup = () => {
             if(result){
                 setShowLogin(false);
                 setShowSignup(false);
+                setLoading(false);
                 setShowBookmark(true);
             }
             console.log("User authenticated:", result.user);
@@ -56,7 +62,9 @@ const Popup = () => {
         }
         try{
             const result = await createUserWithEmailAndPassword(auth, email, password);
+            setLoading(true);
             if(result){
+                setLoading(false);
                 setShowLogin(false);
                 setShowSignup(false);
                 setShowBookmark(true);
@@ -176,10 +184,17 @@ const Popup = () => {
         </div>
         </div>
         }    
-    {
-        showBookmark && 
+        {showBookmark && 
         <Bookmark user={setUser} bookmark={setShowBookmark} login={setShowLogin}/>
-    }
+        }
+        {loading && 
+        <div className='w-[347px] h-[137px] flex items-center justify-center'>
+            <div className='flex items-end gap-[1px]'>
+                <span className='text-[16px] font-semibold tracking-[1px]'>Please wait</span>
+                <img src={loader} alt='Loading' className='h-[16px]'/>
+            </div>
+        </div>
+        }
     </>
   )
 }
