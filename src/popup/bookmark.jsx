@@ -11,6 +11,8 @@ import deleteIcon from '../assets/delete.svg'
 import settingsIcon from '../assets/settingsIcon.svg'
 import logoutIcon from '../assets/logout-icon.svg'
 import gotoIcon from '../assets/external-link.png'
+import arrowUp from '../assets/arrow-up.png'
+import arrowDown from '../assets/arrow-down.png'
 
 const Bookmark = (props) => {
     const [userId, setUserId] = useState(null);
@@ -18,6 +20,7 @@ const Bookmark = (props) => {
     const [url, setUrl] = useState(null);
     const [tags, setTags] = useState(null);
     const [bookmarks, setBookmarks] = useState([]);
+    const [saveClicked, setSaveClicked] = useState(false);
 
     const handleLogout = async () => {
         await signOut(auth);
@@ -103,18 +106,25 @@ const Bookmark = (props) => {
     };
       
   return (
-    <div className='flex flex-col items-center w-[347px] h-auto max-h-[598px] bg-[#FFFBEF] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] overflow-hidden'>
-        <div id='header' className='flex flex-row justify-around items-center bg-[#5591D7] w-[347px] h-[41px]'>
+    <div className='flex flex-col items-center w-[347px] h-auto max-h-[608px] bg-[#FFFBEF] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] overflow-hidden'>
+        <div id='header' className='flex flex-row justify-around items-center bg-[#5591D7] w-[347px] min-h-[41px]'>
             <h1 className='flex text-[16px] font-semibold tracking-[1px] text-white'>
                 <img src={bookmarkIcon} alt='bookmark-icon' className='h-[20px] mt-[3px] mr-[2px]'/>
-                Quickmark AI Bookmark Manager
+                Quickmark Bookmark Manager
             </h1>
             <button onClick={() => window.close()}>
                 <img src={cancelIcon} alt='go-Back' className='h-[24px]'/>
             </button>
         </div>
-            <div className='py-3'>
-                <div className='flex flex-col items-center p-2 w-[320px] bg-[white] rounded-lg shadow-md border-[#f0f0f0] border-[1px]'>
+        <div id='body' className='max-h-[520px]'>
+            <div className='w-full flex justify-start'>
+                <button className='flex items-center gap-1 mt-2 mb-2' onClick={() => setSaveClicked(!saveClicked)}>
+                    <span className='text-[16px] font-normal tracking-[1px] border-transparent border-b-2 hover:border-black'>Save a Bookmark</span>
+                    {saveClicked ? <img src={arrowDown} className='h-[16px]'/> : <img src={arrowUp} className='h-[16px]'/>}
+                </button>
+            </div>
+            {saveClicked && 
+                <div className='mb-2 flex flex-col items-center p-2 w-[320px] bg-[white] rounded-lg shadow-sm border-[#f0f0f0] border-[1px]'>
                     <div className='flex flex-col items-center justify-around gap-1 p-2 w-full'>
                         <div className='flex flex-col items-start'>
                             <label htmlFor='title' className='flex gap-1 items-center mb-1 text-end font-normal text-[16px] tracking-widest'>
@@ -167,17 +177,17 @@ const Bookmark = (props) => {
                             Save Bookmark
                         </button>
                     </div>
-                </div>
-            </div>
-            <div className='pb-3 mt-1 max-h-[174px]'>
-                <div className='flex flex-col p-2 w-[320px] bg-[white] rounded-lg shadow-md border-[#f0f0f0] border-[1px]'>
+                </div> 
+            }
+            <div className={`pb-3 mt-1 ${saveClicked ? 'max-h-[174px]' : 'max-h-[484px]'}`}>
+                <div className='flex flex-col p-2 w-[320px] bg-[white] rounded-lg shadow-sm border-[#f0f0f0] border-[1px]'>
                     <div className='flex flex-row justify-start gap-2'>
                         <img src={savedIcon} alt="Saved bookmarks"/>
                         <span className='font-normal text-[16px] tracking-widest'>Saved Bookmarks</span>
                     </div><hr className='mt-[2px] ml-[-9px] w-[320px]'/>
-                    <div className='flex flex-col items-center justify-around gap-3 p-2 w-full max-h-[120px] overflow-y-auto'>
+                    <div className={`flex flex-col items-center justify-around gap-3 p-2 w-full ${saveClicked? 'max-h-[120px]' : 'max-h-[320px]'} overflow-y-auto`}>
                     {bookmarks.map((bookmark) => (
-                        <div className='bg-white w-[290px] py-2 px-1.5 border-[rgba(0,0,0,0.14)] border-[1px] rounded-[10px] flex flex-row items-center justify-between shadow-md'>
+                        <div className='bg-white w-[290px] py-2 px-1.5 border-[rgba(0,0,0,0.14)] border-[1px] rounded-[10px] flex flex-row items-center justify-between shadow-sm'>
                             <div className='flex flex-col gap-1'>
                                 <a href={bookmark.url} target='_blank' className='flex gap-1.5 items-center'>
                                     <span key={bookmark.id} className='text-[14px] w-auto max-w-[215px] truncate tracking-[4%] font-semibold'>
@@ -194,8 +204,9 @@ const Bookmark = (props) => {
                         ))}
                     </div>
                 </div>
-            </div>    
-        <div id='footer' className='flex flex-row p-4 justify-between items-center bg-[#5591D7] w-[347px] h-[41px]'>
+            </div>
+        </div>    
+        <div id='footer' className='flex flex-row p-4 justify-between items-center bg-[#5591D7] w-[347px] max-h-[41px]'>
             <div className='flex gap-1'>
                 <button className='cursor-pointer'>
                     <img src={settingsIcon} alt='bookmark-icon' className='h-[20px] mt-[3px] mr-[2px] transition-tranform hover:scale-110 duration-200'/>
