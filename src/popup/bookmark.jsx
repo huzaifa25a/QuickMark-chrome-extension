@@ -13,6 +13,8 @@ import logoutIcon from '../assets/logout-icon.svg'
 import gotoIcon from '../assets/external-link.png'
 import arrowUp from '../assets/arrow-up.png'
 import arrowDown from '../assets/arrow-down.png'
+import searchIcon from '../assets/search-icon.png'
+import cancel from '../assets/cancel.svg'
 
 const Bookmark = (props) => {
     const [userId, setUserId] = useState(null);
@@ -20,7 +22,11 @@ const Bookmark = (props) => {
     const [url, setUrl] = useState(null);
     const [tags, setTags] = useState(null);
     const [bookmarks, setBookmarks] = useState([]);
-    const [saveClicked, setSaveClicked] = useState(false);
+    const [saveClicked, setSaveClicked] = useState(true);
+    const [showSearch, setShowSearch] = useState(false);
+    const [showResult, setShowResult] = useState(false);
+    // const [searchString, setSearchString] = useState('');
+    const [showSearchedBookmarks, setShowSearchedBookmarks] = useState([]);
 
     const handleLogout = async () => {
         await signOut(auth);
@@ -60,7 +66,7 @@ const Bookmark = (props) => {
             title,
             url,
             tags,
-            date: new Date().toISOString()
+            date: new Date().toLocaleString()
         }
 
         try{
@@ -104,6 +110,20 @@ const Bookmark = (props) => {
             console.error("error deleting bookmark: ", error);
         }
     };
+
+    const findBookmark = (searchString) => {
+        const searchItem = searchString.toLowerCase();
+        const list = bookmarks.filter((bookmark) => {
+            return(
+                bookmark.title?.toLowerCase().includes(searchItem) ||
+                bookmark.tags?.some(tag => tag.toLowerCase().includes(searchItem))
+            );
+        });
+        console.log("Filtered List: ", list);
+        setShowSearchedBookmarks(list);
+        setShowResult(true);
+    };
+    
       
   return (
     <div className='flex flex-col items-center w-[347px] h-auto max-h-[608px] bg-[#FFFBEF] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] overflow-hidden'>
@@ -113,7 +133,7 @@ const Bookmark = (props) => {
                 Quickmark Bookmark Manager
             </h1>
             <button onClick={() => window.close()}>
-                <img src={cancelIcon} alt='go-Back' className='h-[24px]'/>
+                <img src={cancelIcon} alt='close-window' className='h-[24px]'/>
             </button>
         </div>
         <div id='body' className='max-h-[520px]'>
@@ -132,7 +152,7 @@ const Bookmark = (props) => {
                                 Title
                             </label>
                             <input 
-                            type='title'
+                            type='text'
                             id='title'
                             value={title}
                             placeholder='AI suggested name'
@@ -147,7 +167,7 @@ const Bookmark = (props) => {
                                 URL
                             </label>
                             <input 
-                            type='url'
+                            type='text'
                             id='url'
                             value={url}
                             placeholder='https://www.example.com'
@@ -162,13 +182,13 @@ const Bookmark = (props) => {
                                 Tags
                             </label>
                             <input 
-                            type='tags'
+                            type='text'
                             id='tags'
                             placeholder='Tech, AI, Software development'
                             className='rounded w-[265px] border-[#aeaeaee0] border-[2px] p-2 bg-[#fefefe] text-[#5d5d5d] font-normal font-kufam text-[13px] tracking-[1px] outline-none'
                             onChange={(e) => {
                                 const input = e.target.value;
-                                const tagList = input.split(',').map(tag => tag.trim());
+                                const tagList = input.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
                                 setTags(tagList);
                             }}
                             />
@@ -181,19 +201,58 @@ const Bookmark = (props) => {
             }
             <div className={`pb-3 mt-1 ${saveClicked ? 'max-h-[174px]' : 'max-h-[484px]'}`}>
                 <div className='flex flex-col p-2 w-[320px] bg-[white] rounded-lg shadow-sm border-[#f0f0f0] border-[1px]'>
-                    <div className='flex flex-row justify-start gap-2'>
-                        <img src={savedIcon} alt="Saved bookmarks"/>
-                        <span className='font-normal text-[16px] tracking-widest'>Saved Bookmarks</span>
+                    <div className='flex justify-between items-center min-h-[28px]'>
+                        {showSearch ? 
+                            <input
+                                className='w-full rounded-md py-1 px-[4px] border-1 border-[#e0e0e0] bg-[#eeeeee] transition-all duration-300 outline-none'
+                                type='text'
+                                placeholder='Find bookmark by name or tags...'
+                                onChange={(e) => findBookmark(e.target.value)}
+                            />
+                            :
+                            <div className='flex flex-row justify-start gap-2'>
+                                <img src={savedIcon} alt="Saved bookmarks"/>
+                                <span className='font-normal text-[16px] tracking-widest'>Saved Bookmarks</span>
+                            </div>
+                        }
+                        {!showSearch ? 
+                            <button onClick={() => setShowSearch(true)}>
+                                <img src={searchIcon} alt='search' className='h-[16px] ml-[4px]'/>
+                            </button>
+                            :
+                            <button onClick={() =>{ setShowSearch(false); setShowResult(false); setShowSearchedBookmarks([]); }}>
+                                <img src={cancel} alt='cancel' className='h-[20px] ml-[4px]'/>
+                            </button>
+                        }
                     </div><hr className='mt-[2px] ml-[-9px] w-[320px]'/>
                     <div className={`flex flex-col items-center justify-around gap-3 p-2 w-full ${saveClicked? 'max-h-[120px]' : 'max-h-[320px]'} overflow-y-auto`}>
-                    {bookmarks.map((bookmark) => (
+                    {showResult ? 
+                    showSearchedBookmarks.map((bookmark) => (
+                        <div key={bookmark.id} className='bg-white w-[290px] py-2 px-1.5 border-[rgba(0,0,0,0.14)] border-[1px] rounded-[10px] flex flex-row items-center justify-between shadow-sm'>
+                            <div className='flex flex-col gap-1'>
+                                <a href={bookmark.url} target='_blank' className='flex gap-1.5 items-center'>
+                                    <span className='text-[14px] w-auto max-w-[215px] truncate tracking-[4%] font-semibold'>
+                                        {bookmark.title}
+                                    </span>
+                                    <img src={gotoIcon} alt='external link' className='h-[12px] transition-all hover:scale-110 duration-200'/>
+                                </a>
+                                <span className='flex gap-1 text-[12px] tracking-[4%]'>
+                                    <span className='font-semibold'>Tags: </span>{bookmark.tags ? bookmark.tags.join(", ") : ""}
+                                </span>
+                            </div>
+                            <button onClick={() => removeBookmark(bookmark.id)} className='cursor-pointer'>
+                                <img src={deleteIcon} alt='bookmark Icon' className='h-[16px] transition-transform duration-200 hover:scale-125'/>
+                            </button>
+                        </div>
+                    ))
+                    : bookmarks.map((bookmark) => (
                         <div className='bg-white w-[290px] py-2 px-1.5 border-[rgba(0,0,0,0.14)] border-[1px] rounded-[10px] flex flex-row items-center justify-between shadow-sm'>
                             <div className='flex flex-col gap-1'>
                                 <a href={bookmark.url} target='_blank' className='flex gap-1.5 items-center'>
-                                    <span key={bookmark.id} className='text-[14px] w-auto max-w-[215px] truncate tracking-[4%] font-semibold'>
+                                    <span key={bookmark.id} className='text-[13px] w-auto max-w-[215px] truncate tracking-wider font-semibold' title={bookmark.title}>
                                         {bookmark.title}    
                                     </span>
-                                    <img src={gotoIcon} alt='external link' className='h-[12px] transition-all hover:scale-110 duration-200'/>
+                                    <img src={gotoIcon} alt='external link' className='h-[12px] transition-all hover:scale-110 duration-200 mb-[3px]'/>
                                 </a>    
                                 <span key={bookmark.id} className='flex gap-1 text-[12px] tracking-[4%]'><span className='font-semibold'>Tags: </span>{bookmark.tags ? bookmark.tags.join(", ") : ""}</span>  
                             </div>
