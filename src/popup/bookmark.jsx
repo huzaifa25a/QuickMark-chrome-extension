@@ -84,7 +84,9 @@ const Bookmark = (props) => {
         try{
             await addDoc(collection(db, "Bookmarks"), bookmark);
             setTitle(null);
+            document.getElementById('title').value='';
             setUrl(null);
+            document.getElementById('url').value='';
             setTags(null);
             fetchBookmarks();
         }
@@ -198,7 +200,7 @@ const Bookmark = (props) => {
                             type='text'
                             id='title'
                             value={title}
-                            placeholder='AI suggested name'
+                            placeholder='Quickmark Bookmark Manager'
                             className='rounded w-[265px] border-[#aeaeaee0] border-[2px] p-2 bg-[#fefefe] text-[#5d5d5d] font-normal font-kufam text-[13px] tracking-[1px] outline-none'
                             onChange={(e) => setTitle(e.target.value)}
                             required
