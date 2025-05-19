@@ -98,7 +98,7 @@ const Popup = () => {
         <div className='flex flex-col items-center w-[347px] h-auto bg-[#FFFBEF] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
         <div id='header' className='flex flex-row justify-center items-center bg-[#5591D7] w-[347px] h-[41px]'>
             <h1 className='flex text-[16px] font-semibold tracking-[1px] text-white'>
-                <img src={bookmarkIcon} alt='bookmark-icon'/>
+                <img src={bookmarkIcon} alt='bookmark-icon' className='h-[20px] mr-[2px]'/>
                 Quickmark Bookmark Manager
             </h1>
         </div>
@@ -143,7 +143,7 @@ const Popup = () => {
         <div className='flex flex-col items-center w-[347px] h-auto bg-[#FFFBEF] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
         <div id='header' className='flex flex-row justify-center items-center bg-[#5591D7] w-[347px] h-[41px]'>
             <h1 className='flex text-[16px] font-semibold tracking-[1px] text-white'>
-                <img src={bookmarkIcon} alt='bookmark-icon'/>
+                <img src={bookmarkIcon} alt='bookmark-icon' className='h-[20px] mr-[2px]'/>
                 Quickmark Bookmark Manager
             </h1>
         </div>
