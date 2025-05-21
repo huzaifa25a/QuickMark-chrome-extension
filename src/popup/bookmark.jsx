@@ -27,7 +27,10 @@ const Bookmark = (props) => {
     const [tags, setTags] = useState(null);
     const [favIcon, setFavIcon] = useState(null);
     const [bookmarks, setBookmarks] = useState([]);
-    const [saveClicked, setSaveClicked] = useState(true);
+    const [saveClicked, setSaveClicked] = useState(chrome.storage.local.get('dropDown', (result) => {
+        console.log('Retrieved dropdown state:', result.dropDown);
+        setSaveClicked(result.dropDown);
+    }));
     const [showSearch, setShowSearch] = useState(false);
     const [showSearchResult, setShowSearchResult] = useState(false);
     const [showSearchedBookmarks, setShowSearchedBookmarks] = useState([]);
@@ -183,9 +186,19 @@ const Bookmark = (props) => {
         </div>
         <div id='body' className='max-h-[520px]'>
             <div className='w-full flex justify-start'>
-                <button className='flex items-center gap-1 mt-2' onClick={() => setSaveClicked(!saveClicked)}>
+                <button className='flex items-center gap-1 mt-2' 
+                onClick={() => {
+                    const newState = !saveClicked;
+                    chrome.storage.local.set({ dropDown: newState }, () => {
+                        console.log('Dropdown state saved:', newState);
+                        chrome.storage.local.get('dropDown', (result) => {
+                            console.log('Retrieved dropdown state:', result.dropDown);
+                            setSaveClicked(result.dropDown);
+                        });
+                    });
+                }}>
                     <span className='text-[16px] font-normal tracking-[1px] border-transparent border-b-2 hover:border-black'>Save a Bookmark</span>
-                    {saveClicked ? <img src={arrowDown} className='h-[16px] mb-[3px]'/> : <img src={arrowUp} className='h-[16px] mb-[3px]'/>}
+                    {saveClicked? <img src={arrowDown} className='h-[16px] mb-[3px]'/> : <img src={arrowUp} className='h-[16px] mb-[3px]'/>}
                 </button>
             </div>
             {saveClicked && 
