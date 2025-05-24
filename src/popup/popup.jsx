@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import {auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from '../config';
+import {auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendEmailVerification} from '../config';
 import Bookmark from './bookmark';
 import bookmarkIcon from '../assets/bookmark.svg'
 import loader from '../assets/bouncing-circles.svg'
@@ -13,15 +13,20 @@ const Popup = () => {
     const [password, setPassword] = useState("");
     const [showSignup, setShowSignup] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const [message, showMessage] = useState('');
 
     useEffect(() => {
         const checkUser = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUser(user);
-                setShowBookmark(true);
+                if(user.emailVerified){
+                    setShowBookmark(true);
+                }
                 setLoading(false);
                 setShowSignup(false);
-                setShowLogin(false);
+                if(!user.emailVerified){
+                    setShowLogin(true);
+                }
             } else {
                 setUser(null);
                 setLoading(false);
@@ -34,52 +39,84 @@ const Popup = () => {
 
     const login = async () => {
         if (!email || !password) {
+            showMessage('CredRequired');
+            setTimeout(() => {
+                showMessage('');
+            }, 3000);
             console.log("Both email and password are required!");
             return;
         }
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            chrome.storage.local.set({user: result.user.email});
-            console.log("Email is: ", result.user.email);
-            console.log("User Id is: ", result.user.uid);
-            chrome.storage.local.set({userId: result.user.uid});
-            if(result){
+            if(!result.user.emailVerified){
+                showMessage('verify')
+                setTimeout(() => {
+                    showMessage('')
+                }, 3000)
+                auth.signOut();
+                return;
+            }
+            else{
+                console.log("INSIDE ELSE PART--------------------------")
+                chrome.storage.local.set({user: result.user.email});
+                console.log("Email is: ", result.user.email);
+                console.log("User Id is: ", result.user.uid);
+                chrome.storage.local.set({userId: result.user.uid});
                 setShowLogin(false);
                 setShowSignup(false);
                 setLoading(false);
                 setShowBookmark(true);
-            }
+            
             console.log("User authenticated:", result.user);
+            }
         } catch (error) {
+            showMessage('unknownError');
+            setTimeout(() => {
+                showMessage('');
+            }, 3000);
             console.log("Authentication error:", error.message);
         }
     };
 
     const signin = async () => {
         if (!email || !password) {
+            showMessage('CredRequired');
+            setTimeout(() => {
+                showMessage('');
+            }, 3000);
             console.log("Both email and password are required!");
             return;
         }
         try{
             const result = await createUserWithEmailAndPassword(auth, email, password);
-            setLoading(true);
+            await sendEmailVerification(result.user);
             if(result){
                 setLoading(false);
-                setShowLogin(false);
+                setShowLogin(true);
                 setShowSignup(false);
-                setShowBookmark(true);
+                setShowBookmark(false);
             }
             console.log("User has been signed up.");
         }
         catch (error) {
-            // Handle errors
-            if (error.code === "auth/email-already-in-use") {
-              console.error("This account is already in use.");
-              return;
-            } else {
-              throw error;
+            // Handle errors based on error.code
+            showMessage('unknownError');
+            setTimeout(() => {
+                showMessage('');
+            }, 3000);
+            switch (error.code) {
+              case 'auth/email-already-in-use':
+                console.log("Already in use!");
+                break;
+              case 'auth/weak-password':
+                console.log('Weak Password');
+                break;
+              // Handle other error codes
+              default:
+                console.log("Unexpected error! Try again.")
+                break;
             }
-          }
+        }
     }
 
     async function goToLogin(){
@@ -135,6 +172,16 @@ const Popup = () => {
                         </button>
                         <p className='text-[12px] text-black'>Already have an account? <button className='text-[#498fff] hover:text-[#0b57d0]' onClick={goToLogin}>Login</button></p>
                     </div>
+                    {message === 'CredRequired' ? 
+                        <div className='bg-[#ffaeae] p-2 rounded-md shadow-lg animate-slideMessage'>
+                            <span>Please enter both email and password!</span>
+                        </div>
+                    : message === 'unknownError' ? 
+                        <div className='bg-[#ffaeae] p-2 rounded-md shadow-lg animate-slideMessage'>
+                            <span>An unknown error occured! Try login or create new account.</span>
+                        </div>
+                    : null
+                    }
                 </div>
             </div>
         </div>
@@ -180,6 +227,20 @@ const Popup = () => {
                     </button>
                     <p className='text-[12px] text-black'>Don't have an account? <button className='text-[#498fff] hover:text-[#0b57d0]' onClick={goToSignup}>Signup</button></p>
                 </div>
+                {message === 'verify' ? 
+                    <div className='bg-[#ffaeae] p-2 rounded-md shadow-lg animate-slideMessage'>
+                        <span>Kindly verify your email to continue!</span>
+                    </div>
+                : message === 'CredRequired' ? 
+                    <div className='bg-[#ffaeae] p-2 rounded-md shadow-lg animate-slideMessage'>
+                        <span>Please Enter both email and password!</span>
+                    </div>
+                : message === 'unknownError' ? 
+                    <div className='bg-[#ffaeae] p-2 rounded-md shadow-lg animate-slideMessage'>
+                        <span>An unknown error occured! Please enter correct credentials or create a new account.</span>
+                    </div>
+                : null
+                }
             </div>
         </div>
         </div>

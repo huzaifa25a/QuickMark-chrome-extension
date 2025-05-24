@@ -13,7 +13,8 @@
         "offscreen",
         "tabs",
         "currentTab",
-        "activeTab"
+        "activeTab",
+        "offscreen"
     ],
     "host_permissions": [
         "https://maps.googleapis.com/*"
@@ -22,5 +23,9 @@
     "oauth2": {
         "client_id": "189203013528-gdcl0osud1987fipj4hr5aduhcrek1j6.apps.googleusercontent.com",
         "scopes":["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
+    },
+    "content_security_policy": {
+          "extension_pages": "script-src 'self' ; object-src 'self'",
+          "sandbox": "..."
     }
 }
