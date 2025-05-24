@@ -7,6 +7,11 @@
         "default_popup": "popup.html",
         "default_icon": "./assets/bookmark.png"
     },
+    "icons":{
+        "16": "./assets/bookmark.png",
+        "48": "./assets/bookmark.png",
+        "128": "./assets/bookmark.png"
+    },
     "permissions": [
         "identity",
         "storage",
@@ -25,7 +30,6 @@
         "scopes":["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
     },
     "content_security_policy": {
-          "extension_pages": "script-src 'self' ; object-src 'self'",
-          "sandbox": "..."
+          "extension_pages": "script-src 'self' ; object-src 'self'"
     }
 }
