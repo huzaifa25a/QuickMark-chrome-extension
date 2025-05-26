@@ -71,6 +71,20 @@ const Bookmark = (props) => {
               }); 
     }, []); 
 
+    const alreadyExists = async (myUrl) => {
+        const {userId} = await chrome.storage.local.get('userId');
+        const bookmarksList = await getDocs(collection(db, 'Bookmarks'));
+        const bookmarks = bookmarksList.docs.filter((doc) => doc.data().user_id === userId).map((countryInfo) => countryInfo.data().url);
+        console.log('The saved urls are:', bookmarks);
+        if(bookmarks.includes(myUrl)){
+            console.log('inside IF--------------------');
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     const handleSave = async () => {
         const {userId} = await chrome.storage.local.get('userId');
         console.log("User Id is: ", userId);
@@ -85,6 +99,10 @@ const Bookmark = (props) => {
         }
 
         try{
+            if(await alreadyExists(url)){
+                alert('The bookmark already exist!');
+                return;
+            }
             await addDoc(collection(db, "Bookmarks"), bookmark);
             setTitle(null);
             document.getElementById('title').value='';

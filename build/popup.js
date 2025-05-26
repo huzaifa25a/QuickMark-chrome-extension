@@ -24903,9 +24903,9 @@ var Bookmark = function Bookmark(props) {
       }
     });
   }, []);
-  var handleSave = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      var _yield$chrome$storage, userId, bookmark;
+  var alreadyExists = /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(myUrl) {
+      var _yield$chrome$storage, userId, bookmarksList, bookmarks;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
@@ -24914,6 +24914,45 @@ var Bookmark = function Bookmark(props) {
           case 2:
             _yield$chrome$storage = _context2.sent;
             userId = _yield$chrome$storage.userId;
+            _context2.next = 6;
+            return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(_config__WEBPACK_IMPORTED_MODULE_1__.db, 'Bookmarks'));
+          case 6:
+            bookmarksList = _context2.sent;
+            bookmarks = bookmarksList.docs.filter(function (doc) {
+              return doc.data().user_id === userId;
+            }).map(function (countryInfo) {
+              return countryInfo.data().url;
+            });
+            console.log('The saved urls are:', bookmarks);
+            if (!bookmarks.includes(myUrl)) {
+              _context2.next = 14;
+              break;
+            }
+            console.log('inside IF--------------------');
+            return _context2.abrupt("return", true);
+          case 14:
+            return _context2.abrupt("return", false);
+          case 15:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return function alreadyExists(_x) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+  var handleSave = /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var _yield$chrome$storage2, userId, bookmark;
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.next = 2;
+            return chrome.storage.local.get('userId');
+          case 2:
+            _yield$chrome$storage2 = _context3.sent;
+            userId = _yield$chrome$storage2.userId;
             console.log("User Id is: ", userId);
             setUserId(userId);
             bookmark = {
@@ -24924,51 +24963,61 @@ var Bookmark = function Bookmark(props) {
               favIcon: favIcon,
               date: new Date().toLocaleString()
             };
-            _context2.prev = 7;
-            _context2.next = 10;
-            return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.addDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(_config__WEBPACK_IMPORTED_MODULE_1__.db, "Bookmarks"), bookmark);
+            _context3.prev = 7;
+            _context3.next = 10;
+            return alreadyExists(url);
           case 10:
+            if (!_context3.sent) {
+              _context3.next = 13;
+              break;
+            }
+            alert('The bookmark already exist!');
+            return _context3.abrupt("return");
+          case 13:
+            _context3.next = 15;
+            return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.addDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(_config__WEBPACK_IMPORTED_MODULE_1__.db, "Bookmarks"), bookmark);
+          case 15:
             setTitle(null);
             document.getElementById('title').value = '';
             setUrl(null);
             document.getElementById('url').value = '';
             setTags(null);
             fetchBookmarks();
-            _context2.next = 22;
+            _context3.next = 27;
             break;
-          case 18:
-            _context2.prev = 18;
-            _context2.t0 = _context2["catch"](7);
-            console.error('Error saving bookmark', _context2.t0);
+          case 23:
+            _context3.prev = 23;
+            _context3.t0 = _context3["catch"](7);
+            console.error('Error saving bookmark', _context3.t0);
             alert("Failed to save bookmark");
-          case 22:
+          case 27:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
-      }, _callee2, null, [[7, 18]]);
+      }, _callee3, null, [[7, 23]]);
     }));
     return function handleSave() {
-      return _ref2.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }();
   var fetchBookmarks = /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-      var _yield$chrome$storage2, _userId, bookmarkList, _bookmarks;
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+    var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+      var _yield$chrome$storage3, _userId, bookmarkList, _bookmarks;
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
-            _context3.prev = 0;
-            _context3.next = 3;
+            _context4.prev = 0;
+            _context4.next = 3;
             return chrome.storage.local.get('userId');
           case 3:
-            _yield$chrome$storage2 = _context3.sent;
-            _userId = _yield$chrome$storage2.userId;
+            _yield$chrome$storage3 = _context4.sent;
+            _userId = _yield$chrome$storage3.userId;
             console.log("User Id is: ", _userId);
             setUserId(_userId);
-            _context3.next = 9;
+            _context4.next = 9;
             return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(_config__WEBPACK_IMPORTED_MODULE_1__.db, "Bookmarks"));
           case 9:
-            bookmarkList = _context3.sent;
+            bookmarkList = _context4.sent;
             _bookmarks = bookmarkList.docs.filter(function (doc) {
               return doc.data().user_id === _userId;
             }).map(function (doc) {
@@ -24978,46 +25027,46 @@ var Bookmark = function Bookmark(props) {
             });
             console.log("Bookmarks:", _bookmarks);
             setBookmarks(_bookmarks); // Assuming you're using useState
-            _context3.next = 18;
+            _context4.next = 18;
             break;
           case 15:
-            _context3.prev = 15;
-            _context3.t0 = _context3["catch"](0);
-            console.error("Error fetching bookmarks:", _context3.t0);
-          case 18:
-          case "end":
-            return _context3.stop();
-        }
-      }, _callee3, null, [[0, 15]]);
-    }));
-    return function fetchBookmarks() {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-  var removeBookmark = /*#__PURE__*/function () {
-    var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(id) {
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-        while (1) switch (_context4.prev = _context4.next) {
-          case 0:
-            _context4.prev = 0;
-            _context4.next = 3;
-            return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.deleteDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(_config__WEBPACK_IMPORTED_MODULE_1__.db, "Bookmarks", id));
-          case 3:
-            fetchBookmarks();
-            _context4.next = 9;
-            break;
-          case 6:
-            _context4.prev = 6;
+            _context4.prev = 15;
             _context4.t0 = _context4["catch"](0);
-            console.error("error deleting bookmark: ", _context4.t0);
-          case 9:
+            console.error("Error fetching bookmarks:", _context4.t0);
+          case 18:
           case "end":
             return _context4.stop();
         }
-      }, _callee4, null, [[0, 6]]);
+      }, _callee4, null, [[0, 15]]);
     }));
-    return function removeBookmark(_x) {
+    return function fetchBookmarks() {
       return _ref4.apply(this, arguments);
+    };
+  }();
+  var removeBookmark = /*#__PURE__*/function () {
+    var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(id) {
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.prev = 0;
+            _context5.next = 3;
+            return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.deleteDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(_config__WEBPACK_IMPORTED_MODULE_1__.db, "Bookmarks", id));
+          case 3:
+            fetchBookmarks();
+            _context5.next = 9;
+            break;
+          case 6:
+            _context5.prev = 6;
+            _context5.t0 = _context5["catch"](0);
+            console.error("error deleting bookmark: ", _context5.t0);
+          case 9:
+          case "end":
+            return _context5.stop();
+        }
+      }, _callee5, null, [[0, 6]]);
+    }));
+    return function removeBookmark(_x2) {
+      return _ref5.apply(this, arguments);
     };
   }();
   var findBookmark = function findBookmark(searchString) {
