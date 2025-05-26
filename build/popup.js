@@ -25273,7 +25273,7 @@ var Bookmark = function Bookmark(props) {
     alt: "Saved bookmarks"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     className: "font-normal text-[16px] tracking-widest"
-  }, "Saved Bookmarks")), !showSearch && !filterClick ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, "Saved Bookmarks (", bookmarks.length, ")")), !showSearch && !filterClick ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "flex gap-1 items-start"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     onClick: function onClick() {

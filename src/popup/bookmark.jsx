@@ -308,7 +308,9 @@ const Bookmark = (props) => {
                             ) : (
                                 <div className='flex flex-row items-start gap-2'>
                                     <img src={savedIcon} alt="Saved bookmarks"/>
-                                    <span className='font-normal text-[16px] tracking-widest'>Saved Bookmarks</span>
+                                    <span className='font-normal text-[16px] tracking-widest'>
+                                        Saved Bookmarks ({bookmarks.length})
+                                    </span>
                                 </div>
                             )
                         }
