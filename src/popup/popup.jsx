@@ -4,6 +4,7 @@ import {auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuth
 import Bookmark from './bookmark';
 import bookmarkIcon from '../assets/bookmark.svg'
 import loader from '../assets/bouncing-circles.svg'
+// import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 
 const Popup = () => {
     const [loading, setLoading] = useState(true);
@@ -19,14 +20,9 @@ const Popup = () => {
         const checkUser = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUser(user);
-                if(user.emailVerified){
-                    setShowBookmark(true);
-                }
+                setShowBookmark(true);
                 setLoading(false);
                 setShowSignup(false);
-                if(!user.emailVerified){
-                    setShowLogin(true);
-                }
             } else {
                 setUser(null);
                 setLoading(false);
@@ -37,6 +33,31 @@ const Popup = () => {
         return () => checkUser();
     }, []);
 
+    // const signInWithGoogle = () => {
+    //     chrome.runtime.sendMessage({ type: 'START_GOOGLE_OAUTH' }, async (response) => {
+    //       if (response?.id_token) {
+    //         const credential = GoogleAuthProvider.credential(response.id_token);
+    //         try {
+    //           const userCred = await signInWithCredential(auth, credential);
+    //           const user = userCred.user;
+    //           chrome.storage.local.set({ user: user.email, userId: user.uid });
+    //           setUser(user);
+    //           setShowBookmark(true);
+    //           setShowLogin(false);
+    //           setShowSignup(false);
+    //           setLoading(false);
+    //           console.log(user);
+    //         } catch (error) {
+    //           console.error('Firebase sign-in failed', error);
+    //           showMessage('unknownError');
+    //         }
+    //       } else {
+    //         console.error('OAuth Error:', response?.error);
+    //         showMessage('unknownError');
+    //       }
+    //     });
+    //   };
+      
     const login = async () => {
         if (!email || !password) {
             showMessage('CredRequired');
@@ -48,27 +69,25 @@ const Popup = () => {
         }
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            if(!result.user.emailVerified){
-                showMessage('verify')
-                setTimeout(() => {
-                    showMessage('')
-                }, 3000)
-                auth.signOut();
-                return;
-            }
-            else{
-                console.log("INSIDE ELSE PART--------------------------")
-                chrome.storage.local.set({user: result.user.email});
-                console.log("Email is: ", result.user.email);
-                console.log("User Id is: ", result.user.uid);
-                chrome.storage.local.set({userId: result.user.uid});
-                setShowLogin(false);
-                setShowSignup(false);
-                setLoading(false);
-                setShowBookmark(true);
+            // if(!result.user.emailVerified){
+            //     showMessage('verify')
+            //     setTimeout(() => {
+            //         showMessage('')
+            //     }, 3000)
+            //     auth.signOut();
+            //     return;
+            // }
+            console.log("INSIDE ELSE PART--------------------------")
+            chrome.storage.local.set({user: result.user.email});
+            console.log("Email is: ", result.user.email);
+            console.log("User Id is: ", result.user.uid);
+            chrome.storage.local.set({userId: result.user.uid});
+            setShowLogin(false);
+            setShowSignup(false);
+            setLoading(false);
+            setShowBookmark(true);
             
             console.log("User authenticated:", result.user);
-            }
         } catch (error) {
             showMessage('unknownError');
             setTimeout(() => {
@@ -89,7 +108,6 @@ const Popup = () => {
         }
         try{
             const result = await createUserWithEmailAndPassword(auth, email, password);
-            await sendEmailVerification(result.user);
             if(result){
                 setLoading(false);
                 setShowLogin(true);

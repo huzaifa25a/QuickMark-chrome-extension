@@ -12,6 +12,9 @@
         "48": "./assets/bookmark.png",
         "128": "./assets/bookmark.png"
     },
+    "background": {
+        "service_worker": "background.js"
+        },
     "permissions": [
         "identity",
         "storage",
@@ -22,12 +25,13 @@
         "offscreen"
     ],
     "host_permissions": [
-        "https://maps.googleapis.com/*"
+        "https://maps.googleapis.com/*",
+        "https://accounts.google.com/*"
     ],
     
     "oauth2": {
-        "client_id": "189203013528-gdcl0osud1987fipj4hr5aduhcrek1j6.apps.googleusercontent.com",
-        "scopes":["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
+        "client_id": "189203013528-pmgimegbpd66mhq84fut54tfgtm796g3.apps.googleusercontent.com",
+        "scopes":["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid", "email", "profile"]
     },
     "content_security_policy": {
           "extension_pages": "script-src 'self' ; object-src 'self'"

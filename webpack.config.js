@@ -5,6 +5,7 @@ import CopyPlugin from "copy-webpack-plugin";
 export default {
   entry: {
     popup: "./src/popup/index.jsx", // Ensure it points to the correct entry file
+    background: './src/background.js'
   },
   output: {
     filename: "[name].js",
